@@ -18,7 +18,8 @@ This is the code repository for the GitHub Vulnerability Analysis project.
 ### Edge Lists
 
 Place edge list files under the `/data` folder with the name of `'<dataset>.edgelist'`. An un-directional edge between nodes `a` and `b` can be denoted with `a<space>b` or `b<space>a`. Each edge takes a new line. For example:
-```
+
+```text
 'test.edgelist'
 0 1  
 1 2  
@@ -30,10 +31,11 @@ Place edge list files under the `/data` folder with the name of `'<dataset>.edge
 ### Nodal Features
 
 Nodal features are stored under the `/data` folder titled `'<dataset>.features'`. For `d`-dimension nodal features, each row has `d+1` values, with the index of node v<sub>i</sub> followed by `d` features. For example:
-```
+
+```text
 'test.features'
-0 0.25 0.35 0.41
-1 0.18 0.36 0.24
+0 0.25 0.35 0.41 ...
+1 0.18 0.36 0.24 ...
 . ...
 . ...
 ```
@@ -47,11 +49,11 @@ All experiment configurations are specified in `graph_embedding_config.py`. Spec
 + Experiment parameter summary: `/data/<experiment_name>_config.json`
 + Embeddings: `/embeddings/<experiment_name>/<model>.nv`  
 
-    ```
+    ```text
     #nodes #dim
     n0 e01 e02 e03 ... e0n
     n1 e11 e12 e13 ... e1n
-    n2 ... 
+    n2 ...
     .  ...
     ```
 
