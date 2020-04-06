@@ -39,7 +39,7 @@ n_clusters = 8                  # for KMeans
 eps = 0.01                      # for DBSCAN
 
 # export configuration file
-_f = open("./data/{}_config.txt".format(experiment_name), "w")
+_f = open("./data/{}_config.json".format(experiment_name), "w")
 _d = vars()
 _f.write({k:_d[k] for k in _d.keys() if not k.startswith("_")}.__repr__())
 _f.close()
