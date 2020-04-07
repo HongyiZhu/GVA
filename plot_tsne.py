@@ -4,13 +4,6 @@ import numpy                as np
 import matplotlib.pyplot    as plt
 import pickle
 
-
-def get_data():
-    f = open("{}experiment.cache".format(REPORT_PATH), "rb")
-    results = pickle.load(f)
-    f.close()
-    return results
-
 def plot_embedding(data, label, title, path):
     x_min, x_max = np.min(data), np.max(data)
     data = (data - x_min) / (x_max - x_min)
@@ -27,7 +20,9 @@ def plot_embedding(data, label, title, path):
     plt.savefig(path, format='svg')
 
 def main():
-    result = get_data()
+    f = open("{}experiment.cache".format(REPORT_PATH), "rb")
+    result = pickle.load(f)
+    f.close()
     tsne_result = result[2]
     tsne_time = result[3]
     for model in models:
