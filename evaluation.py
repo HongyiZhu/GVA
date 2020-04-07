@@ -7,6 +7,7 @@ tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 from scipy                  import stats
 from sklearn.cluster        import KMeans, DBSCAN
+from sklearn.manifold       import TSNE
 from sklearn                import metrics
 from mygraph                import Graph_Int, Graph_Str
 from build_embedding        import *
@@ -115,24 +116,37 @@ def main():
     # KMeans
     if KMEANS_EVAL:
         kmeans_prediction = {}
+        tsne_kmeans = {}
         for model in models:
             print("[KMeans] Clustering {} Embedding".format(model))
             temp_t = time.time()
-            kmeans = KMeans(n_clusters=8).fit(graph_embeddings[model])
+            kmeans = KMeans(n_clusters=n_clusters).fit(graph_embeddings[model])
             kmeans_prediction[model] = kmeans.labels_
             kmeans_performance[model] = evaluate_clustering_performance(graph_embeddings[model], kmeans_prediction[model])
-            print("[KMeans] Clustering finished. Time elapsed: {:.3f}".format(time.time() - temp_t))
+            print("[KMeans] Clustering Finished for {} Embedding. Time elapsed: {:.3f}".format(model, time.time() - temp_t))
     
+    # DBSCAN
     if DBSCAN_EVAL:
-        # DBSCAN
         dbscan_predcition = {}
+        tsne_dbscan = {}
         for model in models:
             print("[DBSCAN] Clustering {} Embedding".format(model))
             temp_t = time.time()
-            dbscan = DBSCAN(eps=0.01).fit(graph_embeddings[model])
+            dbscan = DBSCAN(eps=eps).fit(graph_embeddings[model])
             dbscan_predcition[model] = dbscan.labels_
             dbscan_performance[model] = evaluate_clustering_performance(graph_embeddings[model], dbscan_predcition[model])
-            print("[DBSCAN] Clustering finished. Time elapsed: {:.3f}".format(time.time() - temp_t))
+            print("[DBSCAN] Clustering Finished for {} Embedding. Time elapsed: {:.3f}".format(model, time.time() - temp_t))
+    
+    tsne_result = {}
+    tsne_time = {}
+    for model in models:
+        tsne = TSNE(n_components=2, init='pca', random_state=0)
+        temp_t = time.time()
+        tsne_result[model] = tsne.fit_transform(graph_embeddings[model])
+        t_model = time.time() - temp_t
+        print("t-SNE for {} embedding finished ({}s)".format(model, t_model))
+        tsne_time[model] = t_model
+
     print("Clustering Results Evaluated. Total time elapsed: {:.3f}\n====================".format(time.time() - t4))
 
     # Generate Report
@@ -155,7 +169,7 @@ def main():
     
     # dump data to cache
     f = open("{}experiment.cache".format(REPORT_PATH), "wb")
-    data_cache = [graph_embeddings, reconstruction_performance]
+    data_cache = [graph_embeddings, reconstruction_performance, tsne_result, tsne_time]
     if KMEANS_EVAL:
         data_cache.append(kmeans_prediction)
         data_cache.append(kmeans_performance)

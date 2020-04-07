@@ -58,6 +58,7 @@ All experiment configurations are specified in `graph_embedding_config.py`. Spec
     ```
 
 + Evaluation results: `/results/<experiment_name>/results.tsv`
++ t-SNE visualization of clustered embeddings: `/results/<experiment_name>/<clustering algorithm>_<graph embedding model>.svg`
 + Runtime data: `/results/<experiment_name>/experiment.cache`
 
 ## Example
