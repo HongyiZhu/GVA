@@ -71,8 +71,14 @@ class Graph_Int(openne.graph.Graph):
     def read_node_label(self, filename):
         super().read_node_label(filename)
 
-    def read_node_features(self, filename):
-        super().read_node_features(filename)
+    def read_node_features(self, node_index, filename):
+        fin = open(filename, 'r')
+        for l in fin.readlines():
+            vec = l.split()
+            n = node_index[int(vec[0])]
+            self.G.nodes[n]['feature'] = np.array(
+                [float(x) for x in vec[1:]])
+        fin.close()
 
     def read_node_status(self, filename):
         super().read_node_status(filename)

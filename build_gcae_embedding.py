@@ -23,7 +23,7 @@ class GCAE(object):
         self.weight_decay = 5e-4  # obtained from pygcn/train.py line 27
         self.dropout = 0.5  # obtained from pygcn/train.py line 31
         self.feature, self.adj, self.adj_inv = load_data()
-        self.feature = torch.FloatTensor(np.eye(self.adj.shape[0])) # Identity matrix
+        # self.feature = torch.FloatTensor(np.eye(self.adj.shape[0])) # Identity matrix
         
         self.model = GCNAutoencoder(nfeat=self.feature.shape[1], dropout=self.dropout)
         # Define the loss function

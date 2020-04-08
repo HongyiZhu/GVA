@@ -19,7 +19,23 @@ def load_data():
     adj = sp.coo_matrix((np.ones(edges.shape[0]), ([node_index[x] for x in edges[:, 0]], [node_index[x] for x in edges[:, 1]])),
                         shape=(N, N),
                         dtype=np.float32)
-    features = sp.csr_matrix(np.identity(N, dtype=np.float32))
+    if have_features:
+        fin = open(features_filename, 'r')
+        feature_dict = {}
+        for l in fin.readlines():
+            vec = l.split()
+            n = node_index[int(vec[0])]
+            feature_dict[n] = np.array([float(x) for x in vec[1:]])
+        fin.close()
+        feature_dim = feature_dict[0].shape[0]
+        features = np.zeros((N, feature_dim), dtype=np.float32)
+        for key in feature_dict.keys():
+            for i, element in enumerate(feature_dict[key]):
+                features[key][i] = element
+        features = torch.FloatTensor(features)
+    else:
+        features = sp.csr_matrix(np.identity(N, dtype=np.float32))
+        features = torch.FloatTensor(np.array(features.todense()))
     # build symmetric adjacency matrix
     adj = adj + adj.T.multiply(adj.T > adj) - adj.multiply(adj.T > adj)
     # adj = adj + adj.T
@@ -29,6 +45,7 @@ def load_data():
     adj = sparse_mx_to_torch_sparse_tensor(adj)
     adj_inv = adj
     # features = torch.FloatTensor(new_features)
+    
 
     # Calculating the inverse, comment the following 4 lines if you don't want to use inverse
     # print("Calculating inverse")
