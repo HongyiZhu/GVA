@@ -86,7 +86,7 @@ def main():
     graph_str = Graph_Str()
     graph_str.read_edgelist(filename=edgelist_filename, node_index=node_index, weighted=False, directed=False)
     if have_features:
-        graph.read_node_features(filename=features_filename)
+        graph.read_node_features(node_index=node_index, filename=features_filename)
     print("Data Loaded. Time elapsed: {:.3f}\n====================\n".format(time.time() - t1))
 
     # build graph embedding

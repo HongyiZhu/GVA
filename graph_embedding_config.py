@@ -14,12 +14,19 @@ REPORT_PATH = './results/{}/'.format(experiment_name)
 
 # evaluation models
 models = [
-    'LE', 'GF', 'LLE', 'HOPE', 'GraRep',    # Matrix Factorization
-    'DeepWalk', 'node2vec',                 # Random Walk
-    'SDNE', 'VGAE',                         # Deep Representation Learning 'GATE' & 'CANE' to be implemented
-    'LINE',                                 # Edge Reconstruction
-    'GCAE'                                  # GCAE
-    ]
+    'LE', 
+    'GF', 
+    'LLE', 
+    'HOPE', 
+    'GraRep',    
+    'DeepWalk', 
+    'node2vec',                 
+    'SDNE', 
+    'VGAE',                         
+    'LINE',                                 
+    'GCAE',
+    'TADW'
+    ] # 'DANE,' 'GATE,' & 'CANE' to be implemented
 models = [model.upper() for model in models]
 
 embedding_size = 128            # must be smaller than the number of observations in LLE
@@ -32,6 +39,7 @@ workers = 8                     # for DeepWalk and Node2vec
 p = 1                           # for Node2vec
 q = 1                           # for Node2vec
 encoder_list = [512, 128]       # for SDNE
+lamb                            # for TADW
 
 KMEANS_EVAL = True
 DBSCAN_EVAL = False

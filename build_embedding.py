@@ -6,6 +6,7 @@ from openne.lap                 import LaplacianEigenmaps
 from openne.sdne                import SDNE
 from openne.gf                  import GraphFactorization
 from openne.hope                import HOPE
+from opnene.tadw                import TADW
 from graph_embedding_config     import *
 from build_gcae_embedding       import build_gcae
 from build_vgae_embedding       import build_vgae
@@ -97,6 +98,15 @@ def build_line(g, path):
     embedding = load_embedding("{}/LINE.nv".format(path))
     return embedding
 
+def build_tadw(g, path):
+    # TADW OpenNE
+    print("TADW processing...")
+    model_tadw = TADW(g, dim=embedding_size, lamb=lamb)
+    model_tadw.save_embeddings("{}/TADW.nv".format(path))
+    print("TADW finished\n")
+    embedding = load_embedding("{}/TADW.nv".format(path))
+    return embedding
+
 def build_embedding(graph, graph_str, model, path):
     build_functions = {
         'LE': build_le, 
@@ -109,9 +119,11 @@ def build_embedding(graph, graph_str, model, path):
         'SDNE': build_sdne, 
         'VGAE': build_vgae, 
         # 'GATE': build_gate, 
-        # 'CANE': build_cane,         
+        # 'CANE': build_cane,
+        # 'DANE': build_dane,      
         'LINE': build_line,
-        'GCAE': build_gcae                                  
+        'GCAE': build_gcae,
+        'TADW': build_tadw                               
     }
     func = build_functions.get(model)
     embedding = func(graph_str, path) if model in ['DEEPWALK', "NODE2VEC"] else func(graph, path)
