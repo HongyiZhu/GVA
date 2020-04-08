@@ -39,7 +39,7 @@ workers = 8                     # for DeepWalk and Node2vec
 p = 1                           # for Node2vec
 q = 1                           # for Node2vec
 encoder_list = [512, 128]       # for SDNE
-lamb                            # for TADW
+lamb = 0.2                      # for TADW
 
 KMEANS_EVAL = True
 DBSCAN_EVAL = False
