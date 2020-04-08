@@ -6,7 +6,7 @@ from openne.lap                 import LaplacianEigenmaps
 from openne.sdne                import SDNE
 from openne.gf                  import GraphFactorization
 from openne.hope                import HOPE
-from opnene.tadw                import TADW
+from openne.tadw                import TADW
 from graph_embedding_config     import *
 from build_gcae_embedding       import build_gcae
 from build_vgae_embedding       import build_vgae
