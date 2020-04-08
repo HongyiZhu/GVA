@@ -3,6 +3,7 @@
 # from time import time
 import openne.graph
 import networkx as nx
+import numpy as np
 
 class Graph_Int(openne.graph.Graph):
     def __init__(self):
