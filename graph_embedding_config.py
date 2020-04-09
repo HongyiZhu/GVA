@@ -2,28 +2,31 @@
 experiment_name = "user_network"
 
 # configurations
-dataset = "user" # "repo"
-have_features = False
+dataset = "repo" # "user"
+have_features = True
 
 edgelist_filename = "./data/{}.edgelist".format(dataset)
 node_index_filename = "./data/{}.index".format(dataset)
+embedding_mapping = "./data/{}.mapping".format(dataset)
 features_filename = "./data/{}.features".format(dataset) if have_features else None
 
 EMBEDDING_PATH = './embeddings/{}/'.format(experiment_name)
 REPORT_PATH = './results/{}/'.format(experiment_name)
 
+GOTO_CLUSTERING = True
+
 # evaluation models
 models = [
-    'LE', 
-    'GF', 
-    'LLE', 
-    'HOPE', 
-    'GraRep',    
-    'DeepWalk', 
-    'node2vec',                 
-    'SDNE', 
-    'VGAE',                         
-    'LINE',                                 
+    # 'LE', 
+    # 'GF', 
+    # 'LLE', 
+    # 'HOPE', 
+    # 'GraRep',    
+    # 'DeepWalk', 
+    # 'node2vec',                 
+    # 'SDNE', 
+    # 'VGAE',                         
+    # 'LINE',                                 
     'GCAE',
     'TADW'
     ] # 'DANE,' 'GATE,' & 'CANE' to be implemented
@@ -43,7 +46,7 @@ lamb = 0.2                      # for TADW
 
 KMEANS_EVAL = True
 DBSCAN_EVAL = False
-n_clusters = 8                  # for KMeans
+n_clusters = 5                  # for KMeans
 eps = 0.01                      # for DBSCAN
 
 # export configuration file

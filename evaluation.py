@@ -53,7 +53,7 @@ def evaluate_clustering_performance(X, prediction):
     return (silhouette, chs, dbs)
 
 
-def process_node_index(edgelist_filename, node_index_filename):
+def process_node_index(edgelist_filename, node_index_filename, embedding_mapping):
     f = open(edgelist_filename, 'r')
     nodes = []
     for line in f.readlines():
@@ -70,9 +70,15 @@ def process_node_index(edgelist_filename, node_index_filename):
     pickle.dump(nodes_index, f)
     f.close()
 
+    f = open(embedding_mapping, 'w')
+    f.write("Embeddign# Node#\n")
+    for i, x in enumerate(nodes):
+        f.write("{} {}\n".format(str(i), str(x)))
+    f.close()
+
 
 def main():
-    process_node_index(edgelist_filename, node_index_filename)
+    process_node_index(edgelist_filename, node_index_filename, embedding_mapping)
     temp = open(node_index_filename, 'rb')
     node_index = pickle.load(temp)
     temp.close()

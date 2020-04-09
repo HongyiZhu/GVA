@@ -74,27 +74,27 @@ class VGAE(object):
             self.model.train()
             self.optimizer.zero_grad()
 
-            recovered, mu, logvar = self.model(self.features, self.adj_norm)
-            self.loss = loss_function(preds=recovered, labels=self.adj_label,
-                                    mu=mu, logvar=logvar, n_nodes=self.n_nodes,
+            self.recovered, self.mu, self.logvar = self.model(self.features, self.adj_norm)
+            self.loss = loss_function(preds=self.recovered, labels=self.adj_label,
+                                    mu=self.mu, logvar=self.logvar, n_nodes=self.n_nodes,
                                     norm=self.norm, pos_weight=self.pos_weight)
             self.loss.backward()
             self.optimizer.step()
 
-            cur_loss = self.loss.item()
+            self.cur_loss = self.loss.item()
 
-            hidden_emb = mu.data.numpy()
-            roc_curr, ap_curr = get_roc_score(hidden_emb, self.adj_orig, self.val_edges, self.val_edges_false)
-
-            print("Epoch:", '%04d' % (epoch + 1), "train_loss=", "{:.5f}".format(cur_loss),
-                    "val_ap=", "{:.5f}".format(ap_curr),
+            self.hidden_emb = self.mu.data.numpy()
+            print(self.hidden_emb)
+            self.roc_curr, self.ap_curr = get_roc_score(self.hidden_emb, self.adj_orig, self.val_edges, self.val_edges_false)
+            print("Epoch:", '%04d' % (epoch + 1), "train_loss=", "{:.5f}".format(self.cur_loss),
+                    "val_ap=", "{:.5f}".format(self.ap_curr),
                     "time=", "{:.5f}".format(time.time() - t)
                     )
             f = open("{}/VGAE.nv".format(self.embedding_path), "w")
-            f.write(" ".join([str(x) for x in hidden_emb.shape]))
+            f.write(" ".join([str(x) for x in self.hidden_emb.shape]))
             f.write("\n")
-            for i in range(hidden_emb.shape[0]):
-                d = " ".join([str(x) for x in hidden_emb[i]])
+            for i in range(self.hidden_emb.shape[0]):
+                d = " ".join([str(x) for x in self.hidden_emb[i]])
                 f.write("{} {}\n".format(str(i), d))
             f.close()
 
