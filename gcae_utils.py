@@ -24,7 +24,10 @@ def load_data():
         feature_dict = {}
         for l in fin.readlines():
             vec = l.split()
-            n = node_index[int(vec[0])]
+            if int(vec[0]) in node_index.keys():
+                n = node_index[int(vec[0])]
+            else:
+                continue
             feature_dict[n] = np.array([float(x) for x in vec[1:]])
         fin.close()
         feature_dim = feature_dict[0].shape[0]
