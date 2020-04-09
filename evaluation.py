@@ -11,6 +11,7 @@ from sklearn.manifold       import TSNE
 from sklearn                import metrics
 from mygraph                import Graph_Int, Graph_Str
 from build_embedding        import *
+from load_graph_embedding   import load_embedding
 from gem.evaluation         import evaluate_graph_reconstruction as gr
 from graph_embedding_config import *
 import numpy as np
@@ -76,7 +77,6 @@ def process_node_index(edgelist_filename, node_index_filename, embedding_mapping
         f.write("{} {}\n".format(str(i), str(x)))
     f.close()
 
-
 def main():
     process_node_index(edgelist_filename, node_index_filename, embedding_mapping)
     temp = open(node_index_filename, 'rb')
@@ -95,15 +95,23 @@ def main():
         graph.read_node_features(node_index=node_index, filename=features_filename)
     print("Data Loaded. Time elapsed: {:.3f}\n====================\n".format(time.time() - t1))
 
-    # build graph embedding
-    print("====================\nBuilding Graph Embeddings\n")
-    if not os.path.exists(EMBEDDING_PATH):
-        os.makedirs(EMBEDDING_PATH)
-    t2 = time.time()
-    graph_embeddings = {}
-    for model in models:
-        graph_embeddings[model] = build_embedding(graph, graph_str, model, EMBEDDING_PATH)
-    print("Embeddings Constructed. Total time elapsed: {:.3f}\n====================".format(time.time() - t2))
+    if LOAD_TRAINED_EMBEDDING:
+        # load graph embeddings
+        print("====================\nLoading Graph Embeddings\n")
+        for model in models:
+            embedding_file = ("{}/{}.nv".format(EMBEDDING_PATH, model))
+            graph_embeddings[model] = load_embedding(embedding_file)
+        print("Embeddings Loaded.\n====================")
+    else:
+        # build graph embedding
+        print("====================\nBuilding Graph Embeddings\n")
+        if not os.path.exists(EMBEDDING_PATH):
+            os.makedirs(EMBEDDING_PATH)
+        t2 = time.time()
+        graph_embeddings = {}
+        for model in models:
+            graph_embeddings[model] = build_embedding(graph, graph_str, model, EMBEDDING_PATH)
+        print("Embeddings Constructed. Total time elapsed: {:.3f}\n====================".format(time.time() - t2))
 
     # GEM graph reconstruction evaluation
     print("====================\nEvaluating Graph Embeddings")

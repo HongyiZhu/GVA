@@ -13,8 +13,6 @@ features_filename = "./data/{}.features".format(dataset) if have_features else N
 EMBEDDING_PATH = './embeddings/{}/'.format(experiment_name)
 REPORT_PATH = './results/{}/'.format(experiment_name)
 
-GOTO_CLUSTERING = True
-
 # evaluation models
 models = [
     # 'LE', 
@@ -44,8 +42,9 @@ q = 1                           # for Node2vec
 encoder_list = [512, 128]       # for SDNE
 lamb = 0.2                      # for TADW
 
-KMEANS_EVAL = True
-DBSCAN_EVAL = False
+LOAD_TRAINED_EMBEDDING = True   # Skip embedding construction
+KMEANS_EVAL = True              # Use KMeans for clustering
+DBSCAN_EVAL = False             # Use DBSCAN for clustering
 n_clusters = 5                  # for KMeans
 eps = 0.01                      # for DBSCAN
 
