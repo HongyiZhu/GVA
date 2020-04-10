@@ -10,8 +10,9 @@ from openne.tadw                import TADW
 from graph_embedding_config     import *
 from build_gcae_embedding       import build_gcae
 from build_vgae_embedding       import build_vgae
-# from build_gate_embedding       import build_gate
+from build_gate_embedding       import build_gate
 # from build_cane_embedding       import build_cane
+# from build_dane_embedding       import build_dane
 from load_graph_embedding       import load_embedding
 
 
@@ -118,7 +119,7 @@ def build_embedding(graph, graph_str, model, path):
         'NODE2VEC': build_n2v,                 
         'SDNE': build_sdne, 
         'VGAE': build_vgae, 
-        # 'GATE': build_gate, 
+        'GATE': build_gate, 
         # 'CANE': build_cane,
         # 'DANE': build_dane,      
         'LINE': build_line,

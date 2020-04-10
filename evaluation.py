@@ -95,6 +95,7 @@ def main():
         graph.read_node_features(node_index=node_index, filename=features_filename)
     print("Data Loaded. Time elapsed: {:.3f}\n====================\n".format(time.time() - t1))
 
+    graph_embeddings = {}
     if LOAD_TRAINED_EMBEDDING:
         # load graph embeddings
         print("====================\nLoading Graph Embeddings\n")
@@ -108,7 +109,6 @@ def main():
         if not os.path.exists(EMBEDDING_PATH):
             os.makedirs(EMBEDDING_PATH)
         t2 = time.time()
-        graph_embeddings = {}
         for model in models:
             graph_embeddings[model] = build_embedding(graph, graph_str, model, EMBEDDING_PATH)
         print("Embeddings Constructed. Total time elapsed: {:.3f}\n====================".format(time.time() - t2))

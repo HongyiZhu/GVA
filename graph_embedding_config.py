@@ -22,12 +22,15 @@ models = [
     # 'GraRep',    
     # 'DeepWalk', 
     # 'node2vec',                 
-    # 'SDNE', 
-    # 'VGAE',                         
-    # 'LINE',                                 
-    'GCAE',
-    'TADW'
-    ] # 'DANE,' 'GATE,' & 'CANE' to be implemented
+    # 'SDNE',                         
+    # 'LINE',                                  
+    # 'GCAE',
+    # 'TADW',
+    'VGAE',
+    # 'DANE',
+    # 'CANE',
+    # 'GATE',
+    ]
 models = [model.upper() for model in models]
 
 embedding_size = 128            # must be smaller than the number of observations in LLE
@@ -42,11 +45,20 @@ q = 1                           # for Node2vec
 encoder_list = [512, 128]       # for SDNE
 lamb = 0.2                      # for TADW
 
-LOAD_TRAINED_EMBEDDING = True   # Skip embedding construction
+LOAD_TRAINED_EMBEDDING = False  # Skip embedding construction
 KMEANS_EVAL = True              # Use KMeans for clustering
 DBSCAN_EVAL = False             # Use DBSCAN for clustering
-n_clusters = 5                  # for KMeans
+n_clusters = 2                  # for KMeans
 eps = 0.01                      # for DBSCAN
+
+gate_args = {
+    'lr': 0.0001,
+    'n_epochs': epochs,
+    'hidden_dims': [256, embedding_size], 
+    'lambda_': 1.0, 
+    'dropout': 0.0,
+    'gradient_clipping': 5.0,
+}
 
 # export configuration file
 _f = open("./data/{}_config.json".format(experiment_name), "w")
