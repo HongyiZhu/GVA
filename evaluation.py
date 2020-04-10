@@ -72,9 +72,9 @@ def process_node_index(edgelist_filename, node_index_filename, embedding_mapping
     f.close()
 
     f = open(embedding_mapping, 'w')
-    f.write("Embeddign# Node#\n")
+    f.write("EmbeddingID, NodeID\n")
     for i, x in enumerate(nodes):
-        f.write("{} {}\n".format(str(i), str(x)))
+        f.write("{},{}\n".format(str(i), str(x)))
     f.close()
 
 def main():

@@ -7,7 +7,7 @@ have_features = True
 
 edgelist_filename = "./data/{}.edgelist".format(dataset)
 node_index_filename = "./data/{}.index".format(dataset)
-embedding_mapping = "./data/{}.mapping".format(dataset)
+embedding_mapping = "./data/{}_mapping.csv".format(dataset)
 features_filename = "./data/{}.features".format(dataset) if have_features else None
 
 EMBEDDING_PATH = './embeddings/{}/'.format(experiment_name)
