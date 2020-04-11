@@ -1,9 +1,15 @@
+import os
+
 node_file = "./data/repo_nodes.csv"
 features = "./data/repo_feature_matrix_reduced_for_graph.csv"
+edge_file = "./data/repo_graph_projection_edge_list.txt"
 dataset_name = "repo"
 output_features = "./data/{}.features".format(dataset_name)
+output_edgelist = "./data/{}.edgelist".format(dataset_name)
 
 def main():
+    os.rename(edge_file, output_edgelist)
+
     nodes = {}
     # read nodes
     f = open(node_file, 'r')
