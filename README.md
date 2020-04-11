@@ -15,6 +15,10 @@ This is the code repository for the GitHub Vulnerability Analysis project.
 
 ## Dataset
 
+### Preprocessing
+
+The `preprocess_data.py` script parse raw CSVs (node features and nodeID mapping) and rename edge list file as the following standardized format. Please change the file paths in the script before execution.
+
 ### Edge Lists
 
 Place edge list files under the `/data` folder with the name of `'<dataset>.edgelist'`. An un-directional edge between nodes `a` and `b` can be denoted with `a<space>b` or `b<space>a`. Each edge takes a new line. For example:
@@ -63,4 +67,6 @@ All experiment configurations are specified in `graph_embedding_config.py`. Spec
 
 ## Example
 
+`python preprocess_data.py`
 `python evaluation.py`
+`python plot_tsne.py`
