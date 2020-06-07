@@ -4,11 +4,13 @@ experiment_name = "user_network"
 # configurations
 dataset = "repo" # "user"
 have_features = True
+weighted_graph = True
 
 edgelist_filename = "./data/{}.edgelist".format(dataset)
 node_index_filename = "./data/{}.index".format(dataset)
 embedding_mapping = "./data/{}_mapping.csv".format(dataset)
 features_filename = "./data/{}.features".format(dataset) if have_features else None
+node_file = "./data/{}_nodes.csv".format(dataset)
 
 EMBEDDING_PATH = './embeddings/{}/'.format(experiment_name)
 REPORT_PATH = './results/{}/'.format(experiment_name)
@@ -25,11 +27,11 @@ models = [
     # 'SDNE',                         
     # 'LINE',                                  
     # 'GCAE',
-    # 'TADW',
+    'TADW',
     'VGAE',
     # 'DANE',
     # 'CANE',
-    # 'GATE',
+    'GATE',
     ]
 models = [model.upper() for model in models]
 
@@ -48,7 +50,7 @@ lamb = 0.2                      # for TADW
 LOAD_TRAINED_EMBEDDING = False  # Skip embedding construction
 KMEANS_EVAL = True              # Use KMeans for clustering
 DBSCAN_EVAL = False             # Use DBSCAN for clustering
-n_clusters = 2                  # for KMeans
+n_clusters = 8                  # for KMeans
 eps = 0.01                      # for DBSCAN
 
 gate_args = {
@@ -58,6 +60,17 @@ gate_args = {
     'lambda_': 1.0, 
     'dropout': 0.0,
     'gradient_clipping': 5.0,
+}
+
+cane_args = {
+    'ratio': 0.55,
+    'MAX_LEN': 300,
+    'neg_table_size': 1000000,
+    'NEG_SAMPLE_POWER': 0.75,
+    'batch_size': 64,
+    'num_epoch': 200,
+    'embed_size': 200,
+    'lr': 1e-3
 }
 
 # export configuration file

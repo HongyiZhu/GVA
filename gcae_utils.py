@@ -16,7 +16,12 @@ def load_data():
     N = len(node_index)
     edges_unordered = np.genfromtxt(edgelist_filename, dtype=np.int32)
     edges = np.array(edges_unordered).reshape(edges_unordered.shape)
-    adj = sp.coo_matrix((np.ones(edges.shape[0]), ([node_index[x] for x in edges[:, 0]], [node_index[x] for x in edges[:, 1]])),
+    if weighted_graph:
+        adj = sp.coo_matrix((edges[:, 2], ([node_index[x] for x in edges[:, 0]], [node_index[x] for x in edges[:, 1]])),
+                        shape=(N, N),
+                        dtype=np.float32)
+    else:
+        adj = sp.coo_matrix((np.ones(edges.shape[0]), ([node_index[x] for x in edges[:, 0]], [node_index[x] for x in edges[:, 1]])),
                         shape=(N, N),
                         dtype=np.float32)
     if have_features:

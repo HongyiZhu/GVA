@@ -13,7 +13,8 @@ def prepare_graph_data(adj):
     # adapted from preprocess_adj_bias
     num_nodes = adj.shape[0]
     adj = adj + sp.eye(num_nodes) - sp.eye(num_nodes)  # self-loop
-    adj[adj > 0.0] = 1.0
+    if not weighted_graph:
+        adj[adj > 0.0] = 1.0
     if not sp.isspmatrix_coo(adj):
         adj = adj.tocoo()
     adj = adj.astype(np.float32)
@@ -39,7 +40,12 @@ def load_data():
     N = len(node_index)
     edges_unordered = np.genfromtxt(edgelist_filename, dtype=np.int32)
     edges = np.array(edges_unordered).reshape(edges_unordered.shape)
-    adj = sp.coo_matrix((np.ones(edges.shape[0]), ([node_index[x] for x in edges[:, 0]], [node_index[x] for x in edges[:, 1]])),
+    if weighted_graph:
+        adj = sp.coo_matrix((edges[:, 2], ([node_index[x] for x in edges[:, 0]], [node_index[x] for x in edges[:, 1]])),
+                        shape=(N, N),
+                        dtype=np.float32)
+    else:
+        adj = sp.coo_matrix((np.ones(edges.shape[0]), ([node_index[x] for x in edges[:, 0]], [node_index[x] for x in edges[:, 1]])),
                         shape=(N, N),
                         dtype=np.float32)
     if have_features:

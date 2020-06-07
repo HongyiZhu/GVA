@@ -30,7 +30,12 @@ def load_data():
     N = len(node_index)
     edges_unordered = np.genfromtxt(edgelist_filename, dtype=np.int32)
     edges = np.array(edges_unordered).reshape(edges_unordered.shape)
-    adj = sp.coo_matrix((np.ones(edges.shape[0]), ([node_index[x] for x in edges[:, 0]], [node_index[x] for x in edges[:, 1]])),
+    if weighted_graph:
+        adj = sp.coo_matrix((edges[:, 2], ([node_index[x] for x in edges[:, 0]], [node_index[x] for x in edges[:, 1]])),
+                        shape=(N, N),
+                        dtype=np.float32)
+    else:
+        adj = sp.coo_matrix((np.ones(edges.shape[0]), ([node_index[x] for x in edges[:, 0]], [node_index[x] for x in edges[:, 1]])),
                         shape=(N, N),
                         dtype=np.float32)
     adj = adj + adj.T.multiply(adj.T > adj) - adj.multiply(adj.T > adj)
@@ -39,7 +44,10 @@ def load_data():
         feature_dict = {}
         for l in fin.readlines():
             vec = l.split()
-            n = node_index[int(vec[0])]
+            if int(vec[0]) in node_index.keys():
+                n = node_index[int(vec[0])]
+            else:
+                continue
             feature_dict[n] = np.array([float(x) for x in vec[1:]])
         fin.close()
         feature_dim = feature_dict[0].shape[0]
@@ -51,9 +59,18 @@ def load_data():
     else:
         features = sp.csr_matrix(np.identity(N, dtype=np.float32))
         features = torch.FloatTensor(np.array(features.todense()))
-        
+    adj = normalize(adj)
     return adj, features
 
+
+def normalize(mx):
+    """Row-normalize sparse matrix"""
+    rowsum = np.array(mx.sum(1))
+    r_inv = np.power(rowsum, -1).flatten()
+    r_inv[np.isinf(r_inv)] = 0.
+    r_mat_inv = sp.diags(r_inv)
+    mx = r_mat_inv.dot(mx)
+    return mx
 
 def parse_index_file(filename):
     index = []
@@ -171,6 +188,8 @@ def get_roc_score(emb, adj_orig, edges_pos, edges_neg):
     def sigmoid(x):
         return 1 / (1 + np.exp(-x))
 
+    print(emb)
+    print()
     # Predict on test set of edges
     adj_rec = np.dot(emb, emb.T)
     preds = []
@@ -178,7 +197,6 @@ def get_roc_score(emb, adj_orig, edges_pos, edges_neg):
     for e in edges_pos:
         preds.append(sigmoid(adj_rec[e[0], e[1]]))
         pos.append(adj_orig[e[0], e[1]])
-
     preds_neg = []
     neg = []
     for e in edges_neg:
