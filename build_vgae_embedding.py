@@ -16,7 +16,7 @@ from vgae_model import GCNModelVAE
 from vgae_utils import load_data, mask_test_edges, preprocess_graph, get_roc_score, loss_function
 
 class VGAE(object):
-    def __init__(self, graph, embedding_path):
+    def __init__(self, graph, embedding_path, configs):
         self.graph = graph
         self.embedding_path = embedding_path
         self.seed = 42
@@ -26,7 +26,7 @@ class VGAE(object):
         self.lr = 0.01
         self.dropout = 0
 
-        self.adj, self.features = load_data()
+        self.adj, self.features = load_data(configs)
         self.n_nodes, self.feat_dim = self.features.shape
 
         # Store original adjacency matrix (without diagonal entries) for later
@@ -67,7 +67,7 @@ class VGAE(object):
         self.sample_graph()
         self.build_model()
 
-        hidden_emb = None
+        self.hidden_emb = None
         print("VGAE Start Training")
         for epoch in range(epochs):
             t = time.time()
@@ -100,8 +100,8 @@ class VGAE(object):
 
         print("VGAE Optimization Finished!\n")
 
-def build_vgae(g, path):
-    vgae = VGAE(g, path)
+def build_vgae(g, path, configs):
+    vgae = VGAE(g, path, configs)
     vgae.train(epochs)
     embedding = load_embedding("{}/VGAE.nv".format(path))
     return embedding

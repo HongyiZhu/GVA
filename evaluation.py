@@ -14,8 +14,10 @@ from build_embedding        import *
 from load_graph_embedding   import load_embedding
 from gem.evaluation         import evaluate_graph_reconstruction as gr
 from graph_embedding_config import *
+from gva_utils              import load_json, dict2dotdict, dotdict2dict
 import numpy as np
 import networkx as nx
+import argparse
 import pickle
 import time
 import json
@@ -77,9 +79,9 @@ def process_node_index(edgelist_filename, node_index_filename, embedding_mapping
         f.write("{},{}\n".format(str(i), str(x)))
     f.close()
 
-def main():
-    process_node_index(edgelist_filename, node_index_filename, embedding_mapping)
-    temp = open(node_index_filename, 'rb')
+def main(configs, LOAD_TRAINED_EMBEDDING, n_cluster):
+    process_node_index(configs.edgelist_filename, configs.node_index_filename, configs.embedding_mapping)
+    temp = open(configs.node_index_filename, 'rb')
     node_index = pickle.load(temp)
     temp.close()
 
@@ -88,36 +90,34 @@ def main():
     t1 = time.time()
     # load graph from edgelist and feature file
     graph = Graph_Int()
-    graph.read_edgelist(filename=edgelist_filename, node_index=node_index, weighted=weighted_graph, directed=False)
+    graph.read_edgelist(filename=configs.edgelist_filename, node_index=node_index, weighted=configs.weighted_graph, directed=False)
     graph_str = Graph_Str()
-    graph_str.read_edgelist(filename=edgelist_filename, node_index=node_index, weighted=weighted_graph, directed=False)
-    if have_features:
-        graph.read_node_features(node_index=node_index, filename=features_filename)
+    graph_str.read_edgelist(filename=configs.edgelist_filename, node_index=node_index, weighted=configs.weighted_graph, directed=False)
+    if configs.have_features:
+        graph.read_node_features(node_index=node_index, filename=configs.current_feature_file)
     print("Data Loaded. Time elapsed: {:.3f}\n====================\n".format(time.time() - t1))
 
     graph_embeddings = {}
     if LOAD_TRAINED_EMBEDDING:
         # load graph embeddings
         print("====================\nLoading Graph Embeddings\n")
-        for model in models:
-            embedding_file = ("{}/{}.nv".format(EMBEDDING_PATH, model))
+        for model in configs.models:
+            embedding_file = (f"{configs.current_embedding_path}/{model}.nv")
             graph_embeddings[model] = load_embedding(embedding_file)
         print("Embeddings Loaded.\n====================")
     else:
         # build graph embedding
         print("====================\nBuilding Graph Embeddings\n")
-        if not os.path.exists(EMBEDDING_PATH):
-            os.makedirs(EMBEDDING_PATH)
         t2 = time.time()
-        for model in models:
-            graph_embeddings[model] = build_embedding(graph, graph_str, model, EMBEDDING_PATH)
+        for model in configs.models:
+            graph_embeddings[model] = build_embedding(graph, graph_str, model, configs.current_embedding_path, configs)
         print("Embeddings Constructed. Total time elapsed: {:.3f}\n====================".format(time.time() - t2))
 
     # GEM graph reconstruction evaluation
     print("====================\nEvaluating Graph Embeddings")
     t3 = time.time()
     reconstruction_performance = {}
-    for model in models:
+    for model in configs.models:
         reconstruction_performance[model] = evaluate_embedding(graph.G, graph_embeddings[model])
     print("Embeddings Evaluated. Total time elapsed: {:.3f}\n====================".format(time.time() - t3))
 
@@ -131,10 +131,10 @@ def main():
     if KMEANS_EVAL:
         kmeans_prediction = {}
         tsne_kmeans = {}
-        for model in models:
+        for model in configs.models:
             print("[KMeans] Clustering {} Embedding".format(model))
             temp_t = time.time()
-            kmeans = KMeans(n_clusters=n_clusters).fit(graph_embeddings[model])
+            kmeans = KMeans(n_clusters=n_cluster).fit(graph_embeddings[model])
             kmeans_prediction[model] = kmeans.labels_
             kmeans_performance[model] = evaluate_clustering_performance(graph_embeddings[model], kmeans_prediction[model])
             print("[KMeans] Clustering Finished for {} Embedding. Time elapsed: {:.3f}".format(model, time.time() - temp_t))
@@ -143,7 +143,7 @@ def main():
     if DBSCAN_EVAL:
         dbscan_predcition = {}
         tsne_dbscan = {}
-        for model in models:
+        for model in configs.models:
             print("[DBSCAN] Clustering {} Embedding".format(model))
             temp_t = time.time()
             dbscan = DBSCAN(eps=eps).fit(graph_embeddings[model])
@@ -153,7 +153,7 @@ def main():
     
     tsne_result = {}
     tsne_time = {}
-    for model in models:
+    for model in configs.models:
         tsne = TSNE(n_components=2, init='pca', random_state=0)
         temp_t = time.time()
         tsne_result[model] = tsne.fit_transform(graph_embeddings[model])
@@ -164,11 +164,8 @@ def main():
     print("Clustering Results Evaluated. Total time elapsed: {:.3f}\n====================".format(time.time() - t4))
 
     # Generate Report
-    if not os.path.exists(REPORT_PATH):
-        os.makedirs(REPORT_PATH)
-    
-    f = open("{}results.tsv".format(REPORT_PATH), "w")
-    for model in models:
+    f = open("{}results-{}.tsv".format(configs.current_report_path, str(n_cluster)), "w")
+    for model in configs.models:
         f.write("{}\t".format(model))
         MAP, prec_curv = reconstruction_performance[model]
         f.write("{:.3f}\t".format(MAP))
@@ -182,7 +179,7 @@ def main():
     f.close()
     
     # dump data to cache
-    f = open("{}experiment.cache".format(REPORT_PATH), "wb")
+    f = open("{}experiment-{}.cache".format(configs.current_report_path, str(n_cluster)), "wb")
     data_cache = [graph_embeddings, reconstruction_performance, tsne_result, tsne_time]
     if KMEANS_EVAL:
         data_cache.append(kmeans_prediction)
@@ -194,5 +191,21 @@ def main():
     f.close()
 
 
+def get_parser():
+    parser = argparse.ArgumentParser(description="Parser for Embedding Building and Clustering")
+    parser.add_argument("--json_path", type=str, required=True, help="Path to the json config file")
+    parser.add_argument("--n_cluster", type=int, required=True, help="Number of clusters")
+    parser.add_argument("--load_trained_embedding", type=bool, required=False, help="Whether load trained embeddings")
+    parser.add_argument("--feature_file", type=str, required=True, help="Select feature file")
+    return parser
+
 if __name__ == "__main__":
-    main()
+    parser = get_parser()
+    args = parser.parse_args()
+
+    configs = load_json(args.json_path)
+    configs = dict2dotdict(configs)
+    configs.current_embedding_path = f"{configs.EMBEDDING_PATH}{args.feature_file}/"
+    configs.current_report_path = f"{configs.REPORT_PATH}{args.feature_file}/"
+    configs.current_feature_file = f"./data/{configs.org}/{configs.dataset}_{args.feature_file}.features"
+    main(configs, args.load_trained_embedding, args.n_cluster)

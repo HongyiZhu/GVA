@@ -10,6 +10,7 @@ This is the code repository for the GitHub Vulnerability Analysis project.
 + PyTorch
 + NetworkX (>=2.0)
 + GenSim
++ openpyxl
 + [OpenNE: An Open-Source Package for Network Embedding](https://github.com/thunlp/OpenNE)
 + [GEM: Graph Embedding Methods](https://github.com/palash1992/GEM)
 

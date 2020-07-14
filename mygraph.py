@@ -27,21 +27,21 @@ class Graph_Int(openne.graph.Graph):
 
         if directed:
             def read_unweighted(l):
-                _src, _dst = [x for x in l.split()]
+                _src, _dst = [x for x in l.strip().split()]
                 src = node_index[int(_src)]
                 dst = node_index[int(_dst)]
                 self.G.add_edge(src, dst)
                 self.G[src][dst]['weight'] = 1.0
 
             def read_weighted(l):
-                _src, _dst, w = [x for x in l.split()]
+                _src, _dst, w = [x for x in l.strip().split()]
                 src = node_index[int(_src)]
                 dst = node_index[int(_dst)]
                 self.G.add_edge(src, dst)
                 self.G[src][dst]['weight'] = float(w)
         else:
             def read_unweighted(l):
-                _src, _dst = [x for x in l.split()]
+                _src, _dst = [x for x in l.strip().split()]
                 src = node_index[int(_src)]
                 dst = node_index[int(_dst)]
                 self.G.add_edge(src, dst)
@@ -50,7 +50,7 @@ class Graph_Int(openne.graph.Graph):
                 self.G[dst][src]['weight'] = 1.0
 
             def read_weighted(l):
-                _src, _dst, w = [x for x in l.split()]
+                _src, _dst, w = [x for x in l.strip().split(" ")]
                 src = node_index[int(_src)]
                 dst = node_index[int(_dst)]
                 self.G.add_edge(src, dst)

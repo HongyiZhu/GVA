@@ -14,7 +14,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 class GCAE(object):
-    def __init__(self, graph, embedding_path):
+    def __init__(self, graph, embedding_path, configs):
         self.graph = graph
         self.embedding_path = embedding_path
         self.seed = 42  # obtained from pygcn/train.py line 22
@@ -22,7 +22,7 @@ class GCAE(object):
         self.learning_rate = 0.01  # obtained from pygcn/train.py line 25
         self.weight_decay = 5e-4  # obtained from pygcn/train.py line 27
         self.dropout = 0.5  # obtained from pygcn/train.py line 31
-        self.feature, self.adj, self.adj_inv = load_data()
+        self.feature, self.adj, self.adj_inv = load_data(configs)
         # self.feature = torch.FloatTensor(np.eye(self.adj.shape[0])) # Identity matrix
         
         self.model = GCNAutoencoder(nfeat=self.feature.shape[1], dropout=self.dropout)
@@ -54,8 +54,8 @@ class GCAE(object):
             f.write("{} {}\n".format(str(i), d))
         f.close()
         
-def build_gcae(g, path):
-    gcae = GCAE(g, path)
+def build_gcae(g, path, configs):
+    gcae = GCAE(g, path, configs)
     t_total = time.time()
     print("GCAE Start Training")
     for epoch in range(epochs):

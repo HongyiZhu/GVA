@@ -16,7 +16,7 @@ from build_gate_embedding       import build_gate
 from load_graph_embedding       import load_embedding
 
 
-def build_le(g, path):
+def build_le(g, path, configs):
     # Laplacian Eigenmaps OpenNE
     print("Lapacian Eigenmaps processing...")
     model_lap = LaplacianEigenmaps(g, rep_size=embedding_size)
@@ -25,7 +25,7 @@ def build_le(g, path):
     embedding = load_embedding("{}/Lap.nv".format(path))
     return embedding
 
-def build_gf(g, path):
+def build_gf(g, path, configs):
     # GF OpenNE
     print("GF processing...")
     model_gf = GraphFactorization(graph=g, rep_size=embedding_size)
@@ -34,7 +34,7 @@ def build_gf(g, path):
     embedding = load_embedding("{}/GF.nv".format(path))
     return embedding
 
-def build_lle(g, path):
+def build_lle(g, path, configs):
     # LLE OpenNE
     print("LLE processing...")
     model_lle = LLE(graph=g, d=embedding_size)
@@ -43,7 +43,7 @@ def build_lle(g, path):
     embedding = load_embedding("{}/LLE.nv".format(path))
     return embedding
 
-def build_hope(g, path):
+def build_hope(g, path, configs):
     # HOPE OpenNE
     print("HOPE processing...")
     model_hope = HOPE(graph=g, d=embedding_size)
@@ -52,7 +52,7 @@ def build_hope(g, path):
     embedding = load_embedding("{}/HOPE.nv".format(path))
     return embedding
 
-def build_grarep(g, path):
+def build_grarep(g, path, configs):
     # GraRep OpenNE
     print("GraRep processing...")
     model_grarep = GraRep(graph=g, Kstep=kstep, dim=embedding_size)
@@ -61,7 +61,7 @@ def build_grarep(g, path):
     embedding = load_embedding("{}/GraRep.nv".format(path))
     return embedding
 
-def build_dw(g, path):
+def build_dw(g, path, configs):
     # DeepWalk OpenNE
     print("DeepWalk processing...")
     model_deepwalk = Node2vec(graph=g, path_length=walk_length, num_paths=number_walks, 
@@ -71,7 +71,7 @@ def build_dw(g, path):
     embedding = load_embedding("{}/DeepWalk.nv".format(path))
     return embedding
 
-def build_n2v(g, path):
+def build_n2v(g, path, configs):
     # node2vec OpenNE
     print("Node2vec processing...")
     model_n2v = Node2vec(graph=g, path_length=walk_length, num_paths=number_walks, dim=embedding_size,
@@ -81,7 +81,7 @@ def build_n2v(g, path):
     embedding = load_embedding("{}/Node2vec.nv".format(path))
     return embedding
 
-def build_sdne(g, path):
+def build_sdne(g, path, configs):
     # SDNE OpenNE
     print("SDNE processing...")
     model_sdne = SDNE(g, encoder_layer_list=encoder_list, epoch=epochs)
@@ -90,7 +90,7 @@ def build_sdne(g, path):
     embedding = load_embedding("{}/SDNE.nv".format(path))
     return embedding
 
-def build_line(g, path):
+def build_line(g, path, configs):
     # LINE OpenNE
     print("LINE processing...")
     model_line = LINE(g, epoch=epochs, rep_size=embedding_size)
@@ -99,7 +99,7 @@ def build_line(g, path):
     embedding = load_embedding("{}/LINE.nv".format(path))
     return embedding
 
-def build_tadw(g, path):
+def build_tadw(g, path, configs):
     # TADW OpenNE
     print("TADW processing...")
     model_tadw = TADW(g, dim=embedding_size, lamb=lamb)
@@ -108,7 +108,7 @@ def build_tadw(g, path):
     embedding = load_embedding("{}/TADW.nv".format(path))
     return embedding
 
-def build_embedding(graph, graph_str, model, path):
+def build_embedding(graph, graph_str, model, path, configs):
     build_functions = {
         'LE': build_le, 
         'GF': build_gf, 
@@ -127,5 +127,5 @@ def build_embedding(graph, graph_str, model, path):
         'TADW': build_tadw                               
     }
     func = build_functions.get(model)
-    embedding = func(graph_str, path) if model in ['DEEPWALK', "NODE2VEC"] else func(graph, path)
+    embedding = func(graph_str, path, configs) if model in ['DEEPWALK', "NODE2VEC"] else func(graph, path, configs)
     return embedding

@@ -9,11 +9,11 @@ from graph_embedding_config import *
 from scipy import sparse
 
 
-def prepare_graph_data(adj):
+def prepare_graph_data(adj, configs):
     # adapted from preprocess_adj_bias
     num_nodes = adj.shape[0]
     adj = adj + sp.eye(num_nodes) - sp.eye(num_nodes)  # self-loop
-    if not weighted_graph:
+    if not configs.weighted_graph:
         adj[adj > 0.0] = 1.0
     if not sp.isspmatrix_coo(adj):
         adj = adj.tocoo()
@@ -32,15 +32,15 @@ def conver_sparse_tf2np(input):
     # Convert Tensorflow sparse matrix to Numpy sparse matrix
     return [sp.coo_matrix((input[layer][1], (input[layer][0][:, 0], input[layer][0][:, 1])), shape=(input[layer][2][0], input[layer][2][1])) for layer in input]
 
-def load_data():
-    temp = open(node_index_filename, 'rb')
+def load_data(configs):
+    temp = open(configs.node_index_filename, 'rb')
     node_index = pickle.load(temp)
     temp.close()
 
     N = len(node_index)
-    edges_unordered = np.genfromtxt(edgelist_filename, dtype=np.int32)
+    edges_unordered = np.genfromtxt(configs.edgelist_filename, dtype=np.int32)
     edges = np.array(edges_unordered).reshape(edges_unordered.shape)
-    if weighted_graph:
+    if configs.weighted_graph:
         adj = sp.coo_matrix((edges[:, 2], ([node_index[x] for x in edges[:, 0]], [node_index[x] for x in edges[:, 1]])),
                         shape=(N, N),
                         dtype=np.float32)
@@ -48,8 +48,8 @@ def load_data():
         adj = sp.coo_matrix((np.ones(edges.shape[0]), ([node_index[x] for x in edges[:, 0]], [node_index[x] for x in edges[:, 1]])),
                         shape=(N, N),
                         dtype=np.float32)
-    if have_features:
-        fin = open(features_filename, 'r')
+    if configs.have_features:
+        fin = open(configs.current_feature_file, 'r')
         feature_dict = {}
         for l in fin.readlines():
             vec = l.split()

@@ -7,16 +7,16 @@ import scipy
 import pickle
 
 
-def load_data():
+def load_data(configs):
     # build graph
-    temp = open(node_index_filename, 'rb')
+    temp = open(configs.node_index_filename, 'rb')
     node_index = pickle.load(temp)
     temp.close()
 
     N = len(node_index)
-    edges_unordered = np.genfromtxt(edgelist_filename, dtype=np.int32)
+    edges_unordered = np.genfromtxt(configs.edgelist_filename, dtype=np.int32)
     edges = np.array(edges_unordered).reshape(edges_unordered.shape)
-    if weighted_graph:
+    if configs.weighted_graph:
         adj = sp.coo_matrix((edges[:, 2], ([node_index[x] for x in edges[:, 0]], [node_index[x] for x in edges[:, 1]])),
                         shape=(N, N),
                         dtype=np.float32)
@@ -24,8 +24,8 @@ def load_data():
         adj = sp.coo_matrix((np.ones(edges.shape[0]), ([node_index[x] for x in edges[:, 0]], [node_index[x] for x in edges[:, 1]])),
                         shape=(N, N),
                         dtype=np.float32)
-    if have_features:
-        fin = open(features_filename, 'r')
+    if configs.have_features:
+        fin = open(configs.current_feature_file, 'r')
         feature_dict = {}
         for l in fin.readlines():
             vec = l.split()

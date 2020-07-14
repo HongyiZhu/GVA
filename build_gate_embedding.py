@@ -4,13 +4,13 @@ from gate_model                     import GATE
 from gate_trainer                   import Trainer
 import gate_utils
 
-def build_gate(g, embedding_path):
+def build_gate(g, embedding_path, configs):
     print("GATE processing...")
-    G, X = gate_utils.load_data()
+    G, X = gate_utils.load_data(configs)
     feature_dim = X.shape[1]
     gate_args['hidden_dims'] = [feature_dim] + gate_args['hidden_dims']
 
-    G_tf,  S, R = gate_utils.prepare_graph_data(G)
+    G_tf,  S, R = gate_utils.prepare_graph_data(G, configs)
 
     trainer = Trainer(gate_args)
     trainer(G_tf, X, S, R)
