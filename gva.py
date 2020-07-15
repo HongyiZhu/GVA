@@ -8,14 +8,14 @@ import os
 def get_parser():
     parser = argparse.ArgumentParser(description='Automated GVA Processor.')
     parser.add_argument("--org", type=str, required=True, help='Organization of the analysis.')
-    parser.add_argument("--dataset", type=str, required=True, choices=['user', 'repo'], help=r"Process 'user' or 'repo' data (graph)")
-    parser.add_argument("--n_clusters", type=str, required=True, help="Comma delimited list input (e.g., 2,3,4,5,6).")
-    parser.add_argument("--have_features", type=bool, required=False, help="Whether the network has nodal features, default=True", default=True)
-    parser.add_argument("--weighted_graph", type=bool, required=False, help="Whether the edges are weighted, default=True", default=True)
-    parser.add_argument("--models", type=str, required=False, help="Comma delimited model names (e.g., TADW,GCAE,GATE), default=TADW,GCAE,GATE", default="TADW,GCAE,GATE")
-    parser.add_argument("--commit_edgelist", type=bool, help="Use edgelist constructed with commit info, default=False", required=False, default=False)
+    parser.add_argument("--dataset", type=str, required=True, choices=['user', 'repo'], help="Process 'user' or 'repo' dataset.")
+    parser.add_argument("--n_clusters", type=str, required=True, help="Comma delimited list input (e.g., 2,3,4,5,6), default=2.", default="2,")
+    parser.add_argument("--have_features", type=bool, required=False, help="Whether the network has nodal features, default=True.", default=True)
+    parser.add_argument("--weighted_graph", type=bool, required=False, help="Whether the edges are weighted, default=True.", default=True)
+    parser.add_argument("--models", type=str, required=False, help="Comma delimited model names (e.g., TADW,GCAE,GATE), default=TADW,GCAE,GATE", default="TADW,GCAE,GATE.")
+    parser.add_argument("--commit_edgelist", type=bool, help="Use edgelist constructed with commit info, default=False.", required=False, default=False)
     
-    parser.add_argument("--step", type=str, required=False, help="Perform a particular step ([P]reprocess, [B]uild embedding, [E]xport results, Plot [T]SNE) or [A]ll steps), default=A", choices=["P", "B", "E", "T", "A"], default="A")
+    parser.add_argument("--step", type=str, required=False, help="Perform a particular step ([P]reprocess, [B]uild embedding, [E]xport results, Plot [T]SNE) or [A]ll steps), default=A.", choices=["P", "B", "E", "T", "A"], default="A")
 
     return parser
 
